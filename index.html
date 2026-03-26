@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>パソコン教室えがお | 楽しくパソコンを学ぶ！！</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Noto+Sans+JP:wght@300;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['"Noto Sans JP"', 'sans-serif'],
+                        'display': ['"Cinzel"', 'serif'],
+                        'mono': ['"Space Mono"', 'monospace'],
+                    },
+                    colors: {
+                        acid: '#ccff00',
+                        blood: '#ff0000',
+                        abyss: '#050505',
+                        void: '#111111',
+                        neon: '#ff00ff'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            cursor: none;
+            overflow-x: hidden;
+        }
+
+        ::selection {
+            background-color: #ff0000;
+            color: #fff;
+        }
+
+        #cursor-dot {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 24px;
+            height: 24px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: width 0.3s ease, height 0.3s ease;
+        }
+
+        .cursor-hover {
+            width: 80px !important;
+            height: 80px !important;
+        }
+
+        .glitch-text {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .glitch-text::before,
+        .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #050505;
+            opacity: 0.8;
+        }
+        
+        .glitch-text::before {
+            left: 3px;
+            text-shadow: -2px 0 #ff00ff;
+            clip: rect(24px, 550px, 90px, 0);
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+        }
+        
+        .glitch-text::after {
+            left: -3px;
+            text-shadow: -2px 0 #00ffff;
+            clip: rect(85px, 550px, 140px, 0);
+            animation: glitch-anim-2 2.5s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim-2 {
+            0% { clip: rect(65px, 9999px, 12px, 0); }
+            100% { clip: rect(12px, 9999px, 76px, 0); }
+        }
+
+        .clip-diagonal {
+            clip-path: polygon(0 0, 100% 10vw, 100% 100%, 0 calc(100% - 10vw));
+        }
+
+        .clip-diagonal-reverse {
+            clip-path: polygon(0 10vw, 100% 0, 100% calc(100% - 10vw), 0 100%);
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), border-color 0.5s ease;
+        }
+
+        .glass-panel:hover {
+            transform: translateY(-10px) rotate(1deg);
+            border-color: #ff0000;
+        }
+
+        .marquee-container {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            padding: 2vh 0;
+            background: #ff0000;
+            color: #fff;
+            transform: rotate(-2deg) scale(1.05);
+            z-index: 20;
+            position: relative;
+        }
+        .marquee-content {
+            display: inline-block;
+            animation: marquee 30s linear infinite;
+            font-family: 'Noto Sans JP', sans-serif;
+            font-weight: 900;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px) scale(0.95);
+            transition: all 1s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .magnetic-btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem 3rem;
+            border-radius: 9999px;
+            background: transparent;
+            color: #ccff00;
+            border: 1px solid #ccff00;
+            font-family: 'Noto Sans JP', sans-serif;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            position: relative;
+            overflow: hidden;
+            transition: color 0.3s ease, border-color 0.3s ease;
+        }
+        .magnetic-btn::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ff0000;
+            transition: top 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            z-index: -1;
+            border-radius: 50% 50% 0 0;
+        }
+        .magnetic-btn:hover::before {
+            top: 0;
+            border-radius: 0;
+        }
+        .magnetic-btn:hover {
+            color: #fff;
+            border-color: #ff0000;
+        }
+    </style>
+</head>
+<body class="antialiased font-sans">
+
+    <!-- カスタムカーソル -->
+    <div id="cursor-dot"></div>
+
+    <!-- 背景パーティクルキャンバス -->
+    <canvas id="bg-canvas" class="fixed inset-0 z-0 pointer-events-none opacity-60"></canvas>
+
+    <main class="relative z-10 mix-blend-difference">
+        
+        <!-- ナビゲーション -->
+        <nav class="fixed top-0 w-full p-6 flex justify-between items-start z-50 mix-blend-difference">
+            <div class="font-sans font-black text-2xl tracking-tighter interactive-element">
+                パソコン教室<br><span class="text-blood">"えがお"</span>
+            </div>
+            <ul class="font-sans font-bold text-sm tracking-widest flex flex-col items-end gap-2 text-right">
+                <li><a href="#about" class="hover:text-blood transition-colors interactive-element">[01] えがおの特徴</a></li>
+                <li><a href="#courses" class="hover:text-blood transition-colors interactive-element">[02] コース案内</a></li>
+                <li><a href="#system" class="hover:text-blood transition-colors interactive-element">[03] 料金とアクセス</a></li>
+                <li><a href="#contact" class="hover:text-blood transition-colors interactive-element">[04] 無料体験 / お問い合わせ</a></li>
+            </ul>
+        </nav>
+
+        <!-- ヒーローセクション -->
+        <section class="min-h-screen flex flex-col justify-center px-6 md:px-20 pt-20 relative">
+            <div class="max-w-7xl mx-auto w-full">
+                <p class="font-sans font-bold text-acid text-base md:text-lg mb-6 tracking-widest">おかげさまでオープン23年目</p>
+                <h1 class="font-sans text-6xl md:text-8xl lg:text-[7rem] font-black leading-tight tracking-tighter uppercase mb-8">
+                    <span class="block">パソコン教室</span>
+                    <span class="block text-transparent bg-clip-text bg-gradient-to-r from-white via-blood to-white glitch-text mt-2" data-text="&quot;えがお&quot;">&quot;えがお&quot;</span>
+                </h1>
+                
+                <div class="border-l-4 border-blood pl-6 py-2 mb-12">
+                    <p class="font-sans font-bold text-2xl md:text-4xl text-white tracking-wide leading-relaxed">
+                        同じことを<span class="text-blood">100回</span>聞かれても<br>
+                        <span class="text-blood">笑顔</span>でお答えします！
+                    </p>
+                </div>
+
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-10">
+                    <p class="font-sans font-light text-xl md:text-2xl max-w-2xl leading-relaxed text-gray-200">
+                        パソコン教室“えがお”はシニア世代に愛されてオープン23年目を迎えます。<br>
+                        キッズから80歳代まで和気あいあいと楽しく笑顔で学ばれています。<br>
+                        見学はいつでも大歓迎です。おいしいコーヒーを淹れてお待ちしています。
+                    </p>
+                    <a href="#about" class="magnetic-btn interactive-element shrink-0 mt-8 md:mt-0">
+                        教室について知る
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 流れるテキスト（マルキー） -->
+        <div class="marquee-container mt-20">
+            <div class="marquee-content">
+                <span>同じことを100回聞かれても笑顔でお答えします！ // 60歳以上大歓迎ヽ(^。^)ノ // キッズプログラミング // オリジナルテキスト // 無料体験入学随時募集 // </span>
+                <span>同じことを100回聞かれても笑顔でお答えします！ // 60歳以上大歓迎ヽ(^。^)ノ // キッズプログラミング // オリジナルテキスト // 無料体験入学随時募集 // </span>
+            </div>
+        </div>
+
+        <!-- 特徴セクション -->
+        <section id="about" class="bg-acid text-abyss py-32 mt-20 clip-diagonal relative z-10">
+            <div class="max-w-7xl mx-auto px-6 md:px-20 reveal">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                    <div>
+                        <h2 class="font-sans text-5xl md:text-7xl font-black mb-8">えがおの<br>特徴</h2>
+                        <div class="w-20 h-2 bg-blood mb-8"></div>
+                    </div>
+                    <div class="font-sans leading-loose font-bold">
+                        <p class="mb-8 text-3xl md:text-4xl border-b-2 border-blood pb-6 leading-tight text-blood">
+                            「同じことを100回聞かれても<br class="md:hidden">笑顔でお答えします！」
+                        </p>
+                        <ul class="space-y-6 text-lg md:text-xl">
+                            <li class="flex items-start"><span class="mr-3 mt-1">■</span> 好きな曜日と時間帯にできます。</li>
+                            <li class="flex items-start"><span class="mr-3 mt-1">■</span> マイペースで授業が進めます。</li>
+                            <li class="flex items-start"><span class="mr-3 mt-1">■</span> 自分の目標や経験に合わせた受講が出来ます。</li>
+                            <li class="flex items-start"><span class="mr-3 mt-1">■</span> お好きなところだけでもOKです。</li>
+                            <li class="flex items-start"><span class="mr-3 mt-1">■</span> 一般では市販されていない大変好評な『かゆいところに手が届くオリジナルテキスト』を使用しています。</li>
+                            <li class="flex items-start"><span class="mr-3 mt-1">■</span> そして何よりインストラクターが優しく、えがおです(^^♪</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- コース案内セクション -->
+        <section id="courses" class="py-32 relative">
+            <div class="max-w-7xl mx-auto px-6 md:px-20">
+                <h2 class="font-sans font-bold text-acid text-3xl md:text-5xl mb-16 tracking-widest reveal">&gt; コース案内_</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- カード1: 一般コース -->
+                    <div class="glass-panel p-10 rounded-2xl reveal flex flex-col justify-between interactive-element" style="transition-delay: 0.1s;">
+                        <div class="font-mono text-7xl font-light text-blood mb-8">01</div>
+                        <div>
+                            <h3 class="font-sans text-3xl font-bold mb-6">一般コース</h3>
+                            <ul class="font-sans text-base md:text-lg text-gray-200 leading-relaxed space-y-3 list-disc pl-5">
+                                <li>パソコン入門</li>
+                                <li>ワード (前・後篇、応用)</li>
+                                <li>エクセル (前篇、後篇、応用、関数)</li>
+                                <li>年賀状作成</li>
+                                <li>インターネット・メール・SNS</li>
+                                <li>デジカメ・ペイント</li>
+                                <li>パワーポイント</li>
+                                <li>自分史作成</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- カード2: キッズコース -->
+                    <div class="glass-panel p-10 rounded-2xl reveal flex flex-col justify-between md:translate-y-16 interactive-element" style="transition-delay: 0.2s;">
+                        <div class="font-mono text-7xl font-light text-acid mb-8">02</div>
+                        <div>
+                            <h3 class="font-sans text-3xl font-bold mb-4">小中高生コース</h3>
+                            <p class="text-sm md:text-base text-acid mb-6 font-bold border-b border-gray-700 pb-3">※小中高生のみの受講です</p>
+                            <ul class="font-sans text-base md:text-lg text-gray-200 leading-relaxed space-y-3 list-disc pl-5">
+                                <li>ゲームエンジン（Unity）</li>
+                                <li>３DCAD（Fusion360）</li>
+                                <li>動画編集</li>
+                                <li>ロボットプログラミング</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- カード3: 出張サポート -->
+                    <div class="glass-panel p-10 rounded-2xl reveal flex flex-col justify-between interactive-element" style="transition-delay: 0.3s;">
+                        <div class="font-mono text-7xl font-light text-white mb-8">03</div>
+                        <div>
+                            <h3 class="font-sans text-3xl font-bold mb-6">出張サポート</h3>
+                            <p class="font-sans text-base md:text-lg text-gray-200 leading-relaxed mb-6">
+                                パソコン出張サポート。<br>無線LAN設定、ウイルス駆除、OSインストール等、ご自宅でのトラブルを解決します。
+                            </p>
+                            <p class="font-sans text-sm md:text-base text-white bg-blood p-3 rounded inline-block font-bold">
+                                パソコン不具合の診断：0円
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 料金・教室案内セクション -->
+        <section id="system" class="py-32 overflow-hidden relative">
+            <div class="absolute inset-0 z-[-1] opacity-20 flex items-center justify-center">
+                 <div class="w-[150vw] h-[1px] bg-blood transform rotate-45"></div>
+                 <div class="w-[150vw] h-[1px] bg-acid transform -rotate-45 absolute"></div>
+            </div>
+            <div class="max-w-7xl mx-auto px-6 md:px-20 flex flex-col items-center text-center reveal">
+                <h2 class="font-sans text-5xl md:text-7xl font-black mix-blend-difference tracking-tighter leading-none mb-20">
+                    料金と <br>
+                    <span class="text-blood italic">アクセス</span>
+                </h2>
+
+                <div class="w-full text-left font-sans flex flex-col gap-12">
+                    
+                    <!-- 教室アクセス -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="border border-gray-800 p-8 rounded-xl bg-void hover:border-blood transition-colors flex flex-col justify-between">
+                            <div>
+                                <h4 class="text-blood font-bold text-xl mb-1">パソコン教室“えがお”</h4>
+                                <h5 class="text-white font-bold text-2xl mb-4">東山梨教室</h5>
+                                <p class="text-gray-300 text-sm md:text-base leading-relaxed mb-6">
+                                    〒405-0005<br>
+                                    山梨市小原西111-1<br>
+                                    イーストヤマナシ103
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500 text-xs mb-1 font-mono">TEL</p>
+                                <p class="text-2xl lg:text-3xl font-mono text-acid font-bold">0553-20-1052</p>
+                            </div>
+                        </div>
+                        
+                        <div class="border border-gray-800 p-8 rounded-xl bg-void hover:border-blood transition-colors flex flex-col justify-between">
+                            <div>
+                                <h4 class="text-blood font-bold text-xl mb-1">パソコン教室“えがお”</h4>
+                                <h5 class="text-white font-bold text-2xl mb-4">双葉教室 <span class="text-sm text-gray-400 font-normal">（オギノ双葉店）</span></h5>
+                                <p class="text-gray-300 text-sm md:text-base leading-relaxed mb-6">
+                                    〒400-0104<br>
+                                    甲斐市龍地3622-14<br>
+                                    オギノ双葉店敷地内
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500 text-xs mb-1 font-mono">TEL</p>
+                                <p class="text-2xl lg:text-3xl font-mono text-acid font-bold">0551-30-7503</p>
+                            </div>
+                        </div>
+                        
+                        <div class="border border-gray-800 p-8 rounded-xl bg-void opacity-50 flex flex-col justify-between">
+                            <div>
+                                <h4 class="text-gray-500 font-bold text-xl mb-1">パソコン教室“えがお”</h4>
+                                <h5 class="text-gray-400 font-bold text-2xl mb-4">ますほ教室</h5>
+                                <p class="text-sm md:text-base mt-4 text-gray-500 leading-relaxed">2024年3月16日をもって<br>閉校しました</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 料金表 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        
+                        <!-- 月謝 -->
+                        <div class="border border-gray-800 p-8 rounded-xl bg-void glass-panel">
+                            <h4 class="text-white font-bold text-2xl mb-6 border-b border-gray-800 pb-4">◆ 双葉、東山梨教室の月謝</h4>
+                            <div class="flex justify-between items-end mb-8 font-mono">
+                                <span class="text-gray-400 text-lg">入会金</span>
+                                <span class="text-xl font-bold text-white">5,500円</span>
+                            </div>
+                            <ul class="space-y-6 font-mono text-base md:text-lg">
+                                <li class="flex justify-between items-end border-b border-gray-800 pb-3">
+                                    <span class="text-gray-200">４時間コース</span> <span class="text-xl font-bold text-white">7,260円</span>
+                                </li>
+                                <li class="flex justify-between items-end border-b border-gray-800 pb-3">
+                                    <span class="text-gray-200">８時間コース</span> <span class="text-xl font-bold text-white">11,880円</span>
+                                </li>
+                                <li class="flex justify-between items-end border-b border-gray-800 pb-3">
+                                    <span class="text-gray-200">１２時間コース</span> <span class="text-xl font-bold text-white">15,180円</span>
+                                </li>
+                                <li class="flex flex-col sm:flex-row justify-between border-b border-gray-800 pb-3 text-blood font-bold gap-2">
+                                    <span>無制限コース<br class="hidden sm:block"><span class="text-sm font-normal text-acid">(６０歳以上限定)</span></span> 
+                                    <span class="text-xl font-bold sm:self-end">15,180円</span>
+                                </li>
+                                <li class="flex justify-between items-end border-b border-gray-800 pb-3">
+                                    <span class="text-gray-200">個別授業 (1時間)</span> <span class="text-xl font-bold text-white">3,300円</span>
+                                </li>
+                            </ul>
+                            <div class="mt-8 text-sm md:text-base text-gray-400 space-y-2 font-sans">
+                                <p>※別途でテキスト代（一冊）3,300円かかります。</p>
+                                <p>※追加チケットあります。４時間で6,600円（半年間有効）</p>
+                            </div>
+                        </div>
+
+                        <!-- ロボット・出張 -->
+                        <div class="flex flex-col gap-10">
+                            <div class="border border-gray-800 p-8 rounded-xl bg-void glass-panel">
+                                <h4 class="text-acid font-bold text-2xl mb-6 border-b border-gray-800 pb-4">◆ ロボットプログラミングコース 月謝</h4>
+                                <ul class="space-y-6 font-mono text-base md:text-lg">
+                                    <li class="flex justify-between items-end">
+                                        <span class="text-gray-400">入会金</span> <span class="text-xl font-bold text-white">5,500円</span>
+                                    </li>
+                                    <li class="flex justify-between items-end border-b border-gray-800 pb-3">
+                                        <span class="text-gray-200">通常コース</span> <span class="text-xl text-acid font-bold">8,980円</span>
+                                    </li>
+                                    <li class="flex flex-col sm:flex-row justify-between pt-2 gap-2">
+                                        <span class="text-gray-300 text-sm leading-relaxed font-sans">短期集中コース<br>(60分×4回/テキスト・教材費込)</span> 
+                                        <span class="text-xl text-acid font-bold sm:self-end">22,000円</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="border border-gray-800 p-8 rounded-xl bg-void glass-panel">
+                                <h4 class="text-white font-bold text-2xl mb-6 border-b border-gray-800 pb-4">◆ パソコン出張サポート 一例</h4>
+                                <ul class="space-y-4 font-mono text-base text-gray-200">
+                                    <li class="flex justify-between items-end"><span>出張費（基本料金）</span> <span class="text-xl font-bold text-white">3,300円</span></li>
+                                    <li class="flex justify-between items-end"><span>WIFI設定（１台）</span> <span class="text-xl font-bold text-white">6,600円</span></li>
+                                    <li class="flex justify-between items-end"><span>ウィルス駆除</span> <span class="text-xl font-bold text-white">5,500円～</span></li>
+                                    <li class="flex justify-between text-blood font-bold text-lg mt-4 items-end"><span>パソコン不具合の診断</span> <span class="text-xl font-bold">0円</span></li>
+                                    <li class="flex justify-between mt-2 items-end"><span>その他（1時間当たり）</span> <span class="text-xl font-bold text-white">3,300円～</span></li>
+                                </ul>
+                                <p class="mt-6 text-sm text-gray-400 leading-relaxed font-sans">☆出張の場合の料金は、出張費＋各項目料金となります。全て税込み価格です。</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- お問い合わせフォーム -->
+        <section id="contact" class="py-32 relative z-10">
+            <div class="max-w-4xl mx-auto px-6 md:px-20 reveal">
+                <div class="text-center mb-16">
+                    <h2 class="font-sans text-4xl md:text-6xl font-black mb-4 uppercase">無料体験 / お問い合わせ</h2>
+                    <div class="w-20 h-2 bg-acid mx-auto"></div>
+                </div>
+                
+                <form id="form" class="glass-panel p-8 md:p-12 rounded-2xl flex flex-col gap-8">
+                    <div class="flex flex-col gap-3">
+                        <label for="name" class="font-sans font-bold text-gray-300">お名前 <span class="text-blood">*</span></label>
+                        <input type="text" id="name" name="name" required class="bg-abyss border border-gray-700 text-white p-4 rounded focus:outline-none focus:border-acid transition-colors font-sans">
+                    </div>
+                    
+                    <div class="flex flex-col gap-3">
+                        <label for="email" class="font-sans font-bold text-gray-300">メールアドレス <span class="text-blood">*</span></label>
+                        <input type="email" id="email" name="email" required class="bg-abyss border border-gray-700 text-white p-4 rounded focus:outline-none focus:border-acid transition-colors font-sans">
+                    </div>
+                    
+                    <div class="flex flex-col gap-3">
+                        <label for="phone" class="font-sans font-bold text-gray-300">電話番号</label>
+                        <input type="tel" id="phone" name="phone" class="bg-abyss border border-gray-700 text-white p-4 rounded focus:outline-none focus:border-acid transition-colors font-sans">
+                    </div>
+
+                    <div class="flex flex-col gap-3">
+                        <label for="message" class="font-sans font-bold text-gray-300">お問い合わせ内容 / ご希望のコースなど <span class="text-blood">*</span></label>
+                        <textarea id="message" name="message" rows="5" required class="bg-abyss border border-gray-700 text-white p-4 rounded focus:outline-none focus:border-acid transition-colors font-sans"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="magnetic-btn w-full mt-4 interactive-element">
+                        メッセージを送信する
+                    </button>
+                    
+                    <div id="form-message" class="hidden p-4 rounded font-bold text-center mt-2 font-sans"></div>
+                </form>
+            </div>
+        </section>
+
+        <!-- フッター / アクション -->
+        <footer class="bg-void py-32 clip-diagonal-reverse relative z-10 border-t border-blood mt-20">
+            <div class="max-w-7xl mx-auto px-6 md:px-20 reveal flex flex-col items-center text-center">
+                <h2 class="font-sans font-bold text-acid text-base md:text-xl mb-6 tracking-widest">無料体験入学を随時募集しています。</h2>
+                <a href="#contact" class="font-sans text-4xl md:text-7xl font-black hover:text-blood transition-colors duration-500 interactive-element break-all">
+                    無料体験に申し込む
+                </a>
+                <p class="mt-12 font-sans text-gray-300 text-base md:text-xl leading-loose">
+                    原則としてご都合のよい曜日を選んでいただきます。受講はいつからでも始めることができます。<br>
+                    楽しく通える「えがお」の教室をのぞいてみませんか？<br>
+                    前日までに、ご連絡をください。いつでも歓迎いたします。<br>
+                    お気軽にお電話、メールください。
+                </p>
+                
+                <div class="mt-32 w-full flex flex-col md:flex-row justify-between items-center font-sans font-bold text-sm text-gray-500 border-t border-gray-800 pt-8">
+                    <p>&copy; 2026 パソコン教室えがお. ALL RIGHTS RESERVED.</p>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <script>
+        // --- 変数宣言 ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        const cursor = document.getElementById('cursor-dot');
+        const interactiveElements = document.querySelectorAll('.interactive-element, a, button');
+        
+        let width, height, particles = [];
+        const mouse = { x: null, y: null, radius: 150 };
+
+        // --- クラス定義 ---
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 2 + 0.1;
+                this.baseX = this.x;
+                this.baseY = this.y;
+                this.density = (Math.random() * 30) + 1;
+                
+                // 粒子に少しだけ赤を混ぜる演出
+                const colors = ['#ccff00', '#ffffff', '#ff0000'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            update() {
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance < mouse.radius) {
+                    let forceDirectionX = dx / distance;
+                    let forceDirectionY = dy / distance;
+                    let force = (mouse.radius - distance) / mouse.radius;
+                    this.x -= forceDirectionX * force * this.density;
+                    this.y -= forceDirectionY * force * this.density;
+                } else {
+                    if (this.x !== this.baseX) this.x -= (this.x - this.baseX) / 10;
+                    if (this.y !== this.baseY) this.y -= (this.y - this.baseY) / 10;
+                }
+            }
+        }
+
+        // --- 関数定義 ---
+        function init() {
+            particles = [];
+            let numberOfParticles = (width * height) / 9000;
+            for (let i = 0; i < numberOfParticles; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            init();
+        }
+
+        function connect() {
+            for (let a = 0; a < particles.length; a++) {
+                for (let b = a; b < particles.length; b++) {
+                    let dx = particles[a].x - particles[b].x;
+                    let dy = particles[a].y - particles[b].y;
+                    let distance = dx * dx + dy * dy;
+                    if (distance < 15000) {
+                        ctx.strokeStyle = `rgba(204, 255, 0, ${1 - distance/15000 * 0.2})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[a].x, particles[a].y);
+                        ctx.lineTo(particles[b].x, particles[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            connect();
+            requestAnimationFrame(animate);
+        }
+
+        // --- イベントリスナー ---
+        window.addEventListener('mousemove', (event) => {
+            mouse.x = event.clientX;
+            mouse.y = event.clientY;
+            // カーソル追従
+            cursor.style.left = event.clientX + 'px';
+            cursor.style.top = event.clientY + 'px';
+        });
+
+        window.addEventListener('resize', resize);
+
+        interactiveElements.forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('cursor-hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hover'));
+        });
+
+        // Intersection Observer for Reveal
+        const reveals = document.querySelectorAll('.reveal');
+        const revealOptions = { threshold: 0.15, rootMargin: "0px 0px -50px 0px" };
+        const revealOnScroll = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, revealOptions);
+        reveals.forEach(reveal => revealOnScroll.observe(reveal));
+
+        // Magnetic Buttons
+        const magneticBtns = document.querySelectorAll('.magnetic-btn');
+        magneticBtns.forEach(btn => {
+            btn.addEventListener('mousemove', function(e) {
+                const position = btn.getBoundingClientRect();
+                const x = e.clientX - position.left - position.width / 2;
+                const y = e.clientY - position.top - position.height / 2;
+                btn.style.transform = `translate(${x * 0.3}px, ${y * 0.5}px)`;
+            });
+            btn.addEventListener('mouseout', () => btn.style.transform = 'translate(0px, 0px)');
+        });
+
+        // --- フォーム送信処理 ---
+        const form = document.getElementById('form');
+        const submitBtn = form.querySelector('button[type="submit"]');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            formData.append("access_key", "6151e369-5951-415e-a3ec-e13baf643aad");
+
+            const originalText = submitBtn.textContent;
+
+            submitBtn.textContent = "Sending...";
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch("https://api.web3forms.com/submit", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert("Success! Your message has been sent.");
+                    form.reset();
+                } else {
+                    alert("Error: " + data.message);
+                }
+
+            } catch (error) {
+                alert("Something went wrong. Please try again.");
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // --- 実行開始 ---
+        resize();
+        animate();
+    </script>
+</body>
+</html>
